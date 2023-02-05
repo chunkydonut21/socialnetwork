@@ -1,0 +1,127 @@
+{% include "base.html" %} {% load static %} {% block content %}
+
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h3>Friend Requests</h3>
+    </div>
+    <div class="col-md-8 mx-auto">
+      <div class="row">
+        <div class="col-md-3 col-sm-12">
+          <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button
+              class="nav-link active nowrap"
+              id="v-pills-incoming-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#v-pills-incoming"
+              type="button"
+              role="tab"
+              aria-controls="v-pills-incoming"
+              aria-selected="true"
+            >
+              Received ({{ received_requests|length }})
+            </button>
+            <button
+              class="nav-link nowrap"
+              id="v-pills-profile-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#v-pills-outgoing"
+              type="button"
+              role="tab"
+              aria-controls="v-pills-outgoing"
+              aria-selected="false"
+            >
+              Sent ({{ sent_requests|length }})
+            </button>
+          </div>
+        </div>
+        <div class="col-md-9 col-sm-12">
+          <div class="tab-content" id="v-pills-tabContent" style="width: 100%">
+            <div
+              class="tab-pane fade show active"
+              id="v-pills-incoming"
+              role="tabpanel"
+              aria-labelledby="v-pills-incoming-tab"
+            >
+              {% if received_requests %} {% for request in received_requests %}
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center my-3">
+                    <div class="d-flex justify-content-center align-items-center">
+                      <img
+                        src="{{ request.sender.userprofile.avatar.url }}"
+                        class="rounded-circle"
+                        width="75"
+                        height="75"
+                      />
+                      <div class="mx-4">
+                        <a href="{% url 'profile' request.sender.username %}" class="card-title text-decoration-none"
+                          ><em>
+                            <h5>@{{ request.sender.username }}</h5>
+                          </em></a
+                        >
+                        <div>{{ request.sender.first_name }} {{ request.sender.last_name }}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <div>{{ request.datetime }}</div>
+                      <div>
+                        <button class="btn btn-primary btn-sm" onclick='acceptFriendRequest("{{ request.id }}")'>
+                          Accept
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick='declineFriendRequest("{{ request.id }}")'>
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %} {% elif not received_requests %}
+              <span>No pending friend requests...</span>
+              {% endif %}
+            </div>
+            <div class="tab-pane fade" id="v-pills-outgoing" role="tabpanel" aria-labelledby="v-pills-outgoing-tab">
+              {% if sent_requests %} {% for request in sent_requests %}
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center my-3">
+                    <div class="d-flex justify-content-center align-items-center">
+                      <img
+                        src="{{ request.receiver.userprofile.avatar.url }}"
+                        class="rounded-circle"
+                        width="75"
+                        height="75"
+                      />
+                      <div class="mx-4">
+                        <a href="{% url 'profile' request.receiver.username %}" class="card-title text-decoration-none"
+                          ><em>
+                            <h5>@{{ request.receiver.username }}</h5>
+                          </em></a
+                        >
+                        <div>{{ request.receiver_id.first_name }} {{ request.receiver.last_name }}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <div>{{ request.datetime }}</div>
+                      <div>
+                        <button class="btn btn-danger btn-sm" onclick='cancelFriendRequest("{{ request.id }}")'>
+                          Cancel Request
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %} {% elif not sent_requests %}
+              <span>No pending sent requests</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

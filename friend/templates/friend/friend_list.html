@@ -1,0 +1,43 @@
+{% include "base.html" %} {% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12 mx-auto">
+      {% if friend_list %}
+      <div><h3 class="mt-5">{{ friend_list|length }} friend(s) in your friend list.</h3></div>
+      <div class="row mt-5">
+        {% for friend in friend_list %}
+        <div class="col-12">
+          <div class="card p-3 shadow-sm">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                {% if friend.userprofile.avatar %}
+                <img src="{{ friend.userprofile.avatar.url }}" class="rounded-circle" width="75" height="75" />
+                {% endif %}
+                <div class="mx-3">
+                  <p class="card-title font-weight-light">
+                    <em>@{{ friend.username }}</em>
+                  </p>
+                  <h5>{{ friend.first_name }} {{ friend.last_name }}</h5>
+                  <span>Joined on {{ friend.userprofile.created_at }}</span>
+                </div>
+              </div>
+              <div>
+                <a href="{% url 'profile' friend.username %}" class="btn btn-primary">View Profile</a>
+                {% if logged_in_user %}
+                <a href="{% url 'chat:chat_room' friend.username %}" class="btn btn-success my-2">Chat</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <h3 class="mt-5">No friend of this given user...</h3>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

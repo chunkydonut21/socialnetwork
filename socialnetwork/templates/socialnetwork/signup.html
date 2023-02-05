@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <div class="row h-100">
+        <div class="col-md-8 col-sm-12 d-flex justify-content-center align-items-center bg-purple">
+            <div class="text-center text-light">
+                <h1>ConnectU</h1>
+                <h5>Global social network platform built to connect you with your loved ones.</h5>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <form id="signup_form" method="POST" action=""
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="signup-form">
+                    <div class="text-center mb-5">
+                        <h4>Signup on ConnectU!</h4>
+                    </div>
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="first_name">
+                            {{ user_form.first_name.label_tag }}
+                        </label>
+                        {{ user_form.first_name }}
+                        <p class="text-danger">
+                            <small>{{ user_form.first_name.errors.0 }}</small>
+                        </p>
+                    </div>
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="last_name">
+                            {{ user_form.last_name.label_tag }}
+                        </label>
+                        {{ user_form.last_name }}
+                        <p class="text-danger">
+                            <small>{{ user_form.last_name.errors.0 }}</small>
+                        </p>
+                    </div>
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="email">
+                            {{ user_form.email.label_tag }}
+                        </label>
+                        {{ user_form.email }}
+                        <p class="text-danger">
+                            <small>{{ user_form.email.errors.0 }}</small>
+                        </p>
+                    </div>
+
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="email">
+                            {{ user_form.username.label_tag }}
+                        </label>
+                        {{ user_form.username }}
+                        <p class="text-danger"><small>{{ user_form.username.errors.0 }}</small>
+
+                    </div>
+
+
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="password1">
+                            {{ user_form.password1.label_tag }}
+                        </label>
+                        {{ user_form.password1 }}
+                        <p class="text-danger"><small>{{ user_form.password1.errors.0 }}</small>
+                        </p>
+
+                    </div>
+
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="password2">
+                            {{ user_form.password2.label_tag }}
+                        </label>
+                        {{ user_form.password2 }}
+                        <p class="text-danger">
+                            <small>{{ user_form.password2.errors.0 }}</small></p>
+                    </div>
+
+                    <div class="mb-3 mx-5">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </div>
+                    <div class="mb-3 mx-5">Click <a href="{% url 'login' %}">Login</a> if you already have an account!
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+{% endblock %}

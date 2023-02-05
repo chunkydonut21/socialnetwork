@@ -1,0 +1,47 @@
+{% include "base.html" %} {% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12 mx-auto">
+      {% if chat_list %}
+      <div><h3 class="mt-5">Continue a conversation with your friend!</h3></div>
+      <div class="row mt-5">
+        {% for chat_obj, chat_user in chat_list %}
+        <div class="col-12">
+          <div class="card p-3 shadow-sm">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                {% if chat_user.userprofile.avatar %}
+                <img src="{{ chat_user.userprofile.avatar.url }}" class="rounded-circle" width="75" height="75" />
+                {% endif %}
+                <div class="mx-3">
+                  <p class="card-title font-weight-light">
+                    <em>@{{ chat_user }}</em>
+                  </p>
+                  <h5>{{ chat_user.first_name }} {{ chat_user.last_name }}</h5>
+                  <span>Last chat at {{ chat_obj.updated_at }}</span>
+                </div>
+              </div>
+              <div>
+                <a href="{% url 'profile' chat_user.username %}" class="btn btn-primary">View Profile</a>
+                <a href="{% url 'chat:chat_room' chat_user %}" class="btn btn-success my-2">Chat</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <h3 class="mt-5">No User found with the given name. Please try again...</h3>
+      {% endif %}
+    </div>
+    <div class="col-md-8 col-sm-12 mx-auto mt-5">
+      <div class="my-3">
+        <span>Or start a new conversation here </span>
+        <a class="btn btn-primary" href="{% url 'friend:friend_list' user.username %}"> Go to friends list </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

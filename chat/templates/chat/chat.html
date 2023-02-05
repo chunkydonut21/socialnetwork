@@ -1,0 +1,101 @@
+{% include "base.html" %}
+{% load tz %}
+
+{% block content %}
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-md-10 mx-auto my-2">
+                <h2>Chat between: {{ user.username }} and {{ friend.username }}</h2>
+            </div>
+            <div class="col-md-10 mx-auto card shadow-sm" style="height: 80vh;">
+
+                <div id="message-container" class="overflow-auto d-flex flex-md-column" style="height: 80%;">
+                    <div id="message-list">
+                        {% for message in messages %}
+                            {% if message.sender.username == user.username %}
+                                <div class="text-start m-2 d-flex flex-column justify-content-start align-items-end">
+                                    <div>
+                                        <span class="fw-bold">{{ message.sender.username }}</span>
+                                        <span class="chat-message-date">{{ message.timestamp|localtime }}</span>
+                                    </div>
+                                    <div class="chat-bubble-right">
+                                        <span>{{ message.content }}</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-start m-2 flex-column d-flex justify-content-start align-items-start">
+                                    <div>
+                                        <span class="fw-bold">{{ message.sender.username }}</span>
+                                        <span class="chat-message-date">{{ message.timestamp|localtime }}</span>
+                                    </div>
+                                    <div class="chat-bubble-left">
+                                        <span>{{ message.content }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+                </div>
+                <textarea class="form-control" name="message" id="chat-message-input" rows="3" required></textarea>
+                <input type="submit" value="Send" id="chat-message-submit" class="btn btn-primary my-3">
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+<script>
+
+    // scroll to bottom of chat
+    const element = document.getElementById("message-container");
+    element.scrollTop = element.scrollHeight;
+
+    // web socket connection
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws'
+        + window.location.pathname
+    );
+
+    chatSocket.onopen = function (event) {
+        console.log('Connection is open')
+    }
+
+    chatSocket.onmessage = function (event) {
+        console.log('Message received', event)
+
+        $("#message-list").append(
+            "<div class='text-start m-2 flex-column d-flex justify-content-start align-items-end'>" +
+            "<div>" +
+            "<span class='fw-bold'>" + JSON.parse(event.data).username +
+            "</span>" +
+            "<span class='chat-message-date'> " + new Date().toDateString() +
+            "</span>" +
+            "</div>" +
+            "<div class='chat-bubble-right'>" + "<span>" + JSON.parse(event.data).text + "</span>" + "</div>" +
+            "</div>"
+        );
+
+        element.scrollTop = element.scrollHeight;
+
+    }
+
+    chatSocket.onclose = function (event) {
+        console.log('Connection closed', event)
+    }
+
+    chatSocket.onerror = function (event) {
+        console.log('Something went wrong', event)
+    }
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({ "message": message }));
+        messageInputDom.value = '';
+        element.scrollTop = element.scrollHeight;
+    }
+
+
+</script>

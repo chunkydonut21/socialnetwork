@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+    <div class="row h-100">
+        <div class="col-md-8 col-sm-12 d-flex justify-content-center align-items-center bg-purple">
+            <div class="text-center text-light">
+                <h1>ConnectU</h1>
+                <h5>Global social network platform built to connect you with your loved ones.</h5>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mx-auto">
+            <form id="login_form" method="POST" action=""
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="login-form">
+                    <div class="text-center mb-5">
+                        <h4>Login on ConnectU!</h4>
+                    </div>
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <div {% if message.tags %}
+                                    {% if message.tags == "error" %}
+                                        class="alert alert-danger alert-dismissible fade show"
+                                    {% endif %}
+                                        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                {% endif %}
+                                        role="alert">
+                                    {{ message }}
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="username">Username</label>
+                        <input id="username" type="text" name="username" class="form-control"/>
+                    </div>
+                    <div class="mb-3 mx-5">
+                        <label class="form-label" for="password">Password</label>
+                        <input id="password" type="password" name="password" class="form-control"/>
+                    </div>
+                    <div class="mb-3 mx-5">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </div>
+                    <div class="mb-3 mx-5">Click <a href="{% url 'signup' %}">Sign Up</a> if you don't have an account
+                        yet!
+                    </div>
+                    <div class="mb-3 mx-5">
+                        Some test accounts to use:
+                        <div class="badge bg-success">Username - johndoe771 | Password - John@123</div>
+                        <div class="badge bg-success">Username - janedoe231 | Password - Test@123</div>
+                        <div class="badge bg-success">Username - tim121 | Password - Test@123</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

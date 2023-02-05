@@ -1,0 +1,160 @@
+{% include "base.html" %}
+
+{% block content %}
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8 col-sm-12 mx-auto">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div {% if message.tags %}
+                            {% if message.tags == "error" %}
+                                class="alert alert-danger alert-dismissible fade show"
+                            {% endif %}
+                                class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                        {% endif %}
+                                role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-sm-12 mx-auto">
+                <div class="card">
+                    <div class="card-body shadow-sm">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex">
+                                <div>
+                                    {% if profile.avatar %}
+                                        <img class="rounded" src="{{ profile.avatar.url }}" width="200px"
+                                             height="200px"/>
+                                    {% endif %}
+                                </div>
+                                <div class="m-4">
+                                    <h5> @{{ profile.user.username }} </h5>
+
+                                    {% if profile.user.first_name %}
+                                        <h3>{{ profile.user.first_name }} {{ profile.user.last_name }}</h3>
+                                    {% endif %}
+
+                                    {% if profile.status %}
+                                        <p class="text-weight-light">{{ profile.status }}</p>
+                                    {% endif %}
+
+                                    {% if logged_in_user %}
+                                        <a class="btn btn-warning" href="{% url 'profile-edit' %}"> Edit Profile</a>
+                                    {% endif %}
+
+                                    {% if is_friend %}
+                                        <span class="badge bg-primary disabled">You both are friends.</span>
+                                    {% endif %}
+
+                                    <!-- if not own profile and not a friend, then show request status -->
+                                    {% if not is_friend and not logged_in_user %}
+                                        {% if sent_request == 'no_request' %}
+                                            <button class="btn btn-primary"
+                                                    onclick='sendFriendRequest("{{ profile.user.username }}")'>
+                                                Send Friend Request
+                                            </button>
+                                        {% endif %}
+                                        {% if sent_request == 'received_request' %}
+                                            <p>Pending friend request:</p>
+                                            <div class="d-flex">
+                                                <button class="btn btn-secondary"
+                                                        onclick='acceptFriendRequest("{{ request_by_user }}")'>
+                                                    Accept
+                                                </button>
+                                                <button class="btn btn-danger mx-3"
+                                                        onclick='declineFriendRequest("{{ request_by_user }}")'>
+                                                    Decline
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                        {% if sent_request == "send_request" %}
+                                            <div class="d-flex">
+                                                <button class="btn btn-danger btn-sm"
+                                                        onclick='cancelFriendRequest("{{ request_receiver }}")'>
+                                                    Cancel Friend Request
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                            <div class="d-flex flex-row justify-content-center align-items-center">
+
+                                <div class="me-2">
+                                    <a class="btn btn-primary"
+                                       href="{% url 'friend:friend_list' profile.user.username %}">Friends
+                                        ({{ friends|length }})</a>
+                                </div>
+                                {% if logged_in_user %}
+                                    <div>
+                                        <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend
+                                            requests
+                                            ({{ friend_requests }})</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-sm-12 mx-auto py-4">
+            <h4 class="my-3">My Activity</h4>
+            {% if show_profile %}
+                {% if post_list %}
+                    {% for post in post_list %}
+                        <div class="card mb-3 my-3 shadow-sm">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="author-details d-flex align-items-center">
+                                    <img src="{{ post.author.userprofile.avatar.url }}"
+                                         class="rounded-circle"
+                                         width="50" height="50"/>
+                                    <a href="{% url 'profile' post.author.username %}"
+                                       class="text-decoration-none text-reset mx-3 my-0 fw-bold"> {{ post.author.username }} </a>
+                                </div>
+                                <div>
+                                    <p class="card-text"><small class="text-muted">{{ post.created_at }}</small>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ post.text }}</p>
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" class="rounded mx-auto d-block" alt="..."
+                                         style="height: 300px; width:250px;">
+                                {% endif %}
+
+                                <button class="btn btn-success btn-sm"
+                                        onclick='upvoteUserPost("{{ post.id }}")'>
+                                    Upvote ({{ post.user_likes.all.count }})
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="d-flex justify-content-center mt-5">
+                        <h5>Nothing to show here...</h5>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="d-flex justify-content-center mt-5">
+                    <h5>This profile is private...</h5>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+

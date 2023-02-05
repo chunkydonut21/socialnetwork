@@ -1,0 +1,39 @@
+{% include "base.html" %} {% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12 mx-auto">
+      {% if users %}
+
+      <div><h3 class="mt-5">{{ users|length }} User(s) found with the given name.</h3></div>
+      <div class="row mt-5">
+        {% for user in users %}
+        <div class="col-md-6 col-sm-12">
+          <div class="card p-3 shadow-sm">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                {% if user.userprofile.avatar %}
+                <img src="{{ user.userprofile.avatar.url }}" class="rounded-circle" width="75" height="75" />
+                {% endif %}
+                <div class="mx-3">
+                  <h5 class="card-title">{{ user.username }}</h5>
+                  <span>{{ user.first_name }} {{ user.last_name }}</span>
+                  <span>{{ user.userprofile.created_at }}</span>
+                </div>
+              </div>
+              <div>
+                <a href="{% url 'profile' user.username %}" class="btn btn-primary">View Profile</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <h3 class="mt-5">No User found with the given name. Please try again...</h3>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
